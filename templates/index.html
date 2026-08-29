@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TruthLens — AI-powered fake news & misinformation detector for students. Verify announcements, detect suspicious messages, and access trusted updates." />
+  <title>TruthLens — AI Fake News Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <link rel="stylesheet" href="/static/css/components.css" />
+  <link rel="stylesheet" href="/static/css/gauge.css" />
+  <link rel="stylesheet" href="/static/css/dashboard.css" />
+  <link rel="stylesheet" href="/static/css/responsive.css" />
+</head>
+<body>
+
+  <!-- Animated background orbs -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ── SIDEBAR ────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">🛡️</span>
+      <span class="logo-text">TruthLens</span>
+    </div>
+    <nav class="sidebar-nav" role="navigation" aria-label="Main navigation">
+      <a href="#" class="nav-item active" data-section="analyzer" id="nav-analyzer">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Analyzer</span>
+      </a>
+      <a href="#" class="nav-item" data-section="trusted" id="nav-trusted">
+        <span class="nav-icon">✅</span>
+        <span class="nav-label">Trusted Board</span>
+      </a>
+      <a href="#" class="nav-item" data-section="community" id="nav-community">
+        <span class="nav-icon">🚩</span>
+        <span class="nav-label">Community</span>
+      </a>
+      <a href="#" class="nav-item" data-section="dashboard" id="nav-dashboard">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-section="whatsapp" id="nav-whatsapp">
+        <span class="nav-icon">📱</span>
+        <span class="nav-label">WhatsApp Bot</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <span class="model-badge" id="model-badge">⏳ Loading...</span>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ───────────────────────────────────────────── -->
+  <main class="main-content" id="main-content">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="menu-toggle" id="menu-toggle" aria-label="Toggle sidebar">☰</button>
+      <div class="topbar-title" id="topbar-title">🔬 Message Analyzer</div>
+      <div class="topbar-actions">
+        <span class="status-dot" id="status-dot" title="API status"></span>
+      </div>
+    </header>
+
+    <!-- ── SECTION: Analyzer ─────────────────────────────────────── -->
+    <section class="section active" id="section-analyzer">
+      <div class="section-header">
+        <h1>Message Analyzer</h1>
+        <p class="section-subtitle">Paste any suspicious message or announcement to get an instant AI-powered credibility report.</p>
+      </div>
+
+      <div class="analyzer-grid">
+        <!-- Input Card -->
+        <div class="glass-card input-card">
+          <div class="card-header">
+            <span class="card-icon">📨</span>
+            <h2>Paste Message</h2>
+          </div>
+          <textarea
+            id="analyzer-input"
+            class="message-textarea"
+            placeholder="Paste any forwarded message, announcement, or suspicious text here…&#10;&#10;Example: 🚨 URGENT!!! Tomorrow's exam has been CANCELLED!!! Forward to all students NOW!!!"
+            rows="8"
+            maxlength="5000"
+            aria-label="Message input"
+          ></textarea>
+          <div class="input-footer">
+            <span class="char-count" id="char-count">0 / 5000</span>
+            <div class="input-actions">
+              <button class="btn btn-ghost" id="btn-clear" aria-label="Clear input">Clear</button>
+              <button class="btn btn-primary" id="btn-analyze" aria-label="Analyze message">
+                <span class="btn-icon">🔍</span> Analyze
+              </button>
+            </div>
+          </div>
+
+          <!-- Sample messages -->
+          <div class="sample-section">
+            <p class="sample-label">Try a sample:</p>
+            <div class="sample-chips">
+              <button class="chip chip-fake" data-sample="fake1">🔴 Fake Sample</button>
+              <button class="chip chip-real" data-sample="real1">✅ Real Sample</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gauge Card -->
+        <div class="glass-card gauge-card" id="gauge-card">
+          <div class="gauge-placeholder" id="gauge-placeholder">
+            <div class="placeholder-icon">🛡️</div>
+            <p>Your credibility report will appear here</p>
+          </div>
+          <div class="gauge-result hidden" id="gauge-result">
+            <div class="gauge-wrapper">
+              <svg class="gauge-svg" viewBox="0 0 220 140" aria-label="Credibility gauge">
+                <defs>
+                  <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stop-color="#e63946"/>
+                    <stop offset="33%"  stop-color="#f4a261"/>
+                    <stop offset="66%"  stop-color="#b8e986"/>
+                    <stop offset="100%" stop-color="#00d97e"/>
+                  </linearGradient>
+                </defs>
+                <!-- Track arc -->
+                <path class="gauge-track" d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke-width="16" stroke-linecap="round"/>
+                <!-- Progress arc -->
+                <path class="gauge-progress" id="gauge-arc" d="M 20 120 A 90 90 0 0 1 200 120" fill="none" stroke="url(#gaugeGrad)" stroke-width="16" stroke-linecap="round"/>
+                <!-- Center score -->
+                <text class="gauge-score-text" id="gauge-score-text" x="110" y="108" text-anchor="middle">0</text>
+                <text class="gauge-label-text" x="110" y="126" text-anchor="middle">/ 100</text>
+              </svg>
+            </div>
+            <div class="verdict-badge" id="verdict-badge"></div>
+            <div class="score-bar-row">
+              <span class="score-label">ML Model</span>
+              <div class="score-mini-bar"><div class="score-mini-fill" id="ml-bar"></div></div>
+              <span class="score-val" id="ml-val">—</span>
+            </div>
+            <div class="score-bar-row">
+              <span class="score-label">Heuristic</span>
+              <div class="score-mini-bar"><div class="score-mini-fill" id="heuristic-bar"></div></div>
+              <span class="score-val" id="heuristic-val">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidence Cards -->
+      <div class="evidence-section hidden" id="evidence-section">
+        <h2 class="section-sub-title">Evidence Breakdown</h2>
+        <div class="evidence-grid" id="evidence-grid"></div>
+      </div>
+
+      <!-- Duplicate Alert -->
+      <div class="duplicate-alert hidden" id="duplicate-alert">
+        <div class="glass-card alert-card">
+          <div class="alert-header">
+            <span class="alert-icon">🔄</span>
+            <h3>Similar Message Detected!</h3>
+          </div>
+          <div id="duplicate-content"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: Trusted Board ─────────────────────────────────── -->
+    <section class="section" id="section-trusted">
+      <div class="section-header">
+        <h1>Trusted Announcements</h1>
+        <p class="section-subtitle">Verified official announcements from authorized sources.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="ann-search" placeholder="Search announcements…" aria-label="Search announcements" />
+        </div>
+        <div class="filter-chips" id="ann-filters">
+          <button class="chip active" data-cat="">All</button>
+          <button class="chip" data-cat="exams">📚 Exams</button>
+          <button class="chip" data-cat="events">🎉 Events</button>
+          <button class="chip" data-cat="general">📢 General</button>
+          <button class="chip" data-cat="emergency">🚨 Emergency</button>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btn-add-ann">+ Add</button>
+      </div>
+
+      <div class="announcements-list" id="announcements-list">
+        <div class="loading-spinner">Loading…</div>
+      </div>
+
+      <!-- Add Announcement Modal -->
+      <div class="modal-overlay hidden" id="ann-modal">
+        <div class="modal glass-card">
+          <div class="modal-header">
+            <h3>Add Verified Announcement</h3>
+            <button class="modal-close" id="ann-modal-close">✕</button>
+          </div>
+          <form id="ann-form" novalidate>
+            <div class="form-group">
+              <label for="ann-title">Title *</label>
+              <input type="text" id="ann-title" placeholder="Announcement title" required />
+            </div>
+            <div class="form-group">
+              <label for="ann-body">Body *</label>
+              <textarea id="ann-body" rows="4" placeholder="Full announcement text…" required></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ann-category">Category</label>
+                <select id="ann-category">
+                  <option value="general">📢 General</option>
+                  <option value="exams">📚 Exams</option>
+                  <option value="events">🎉 Events</option>
+                  <option value="emergency">🚨 Emergency</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="ann-source">Source *</label>
+                <input type="text" id="ann-source" placeholder="e.g. Prof. Sharma, HOD" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ann-expires">Expires At (optional)</label>
+                <input type="datetime-local" id="ann-expires" />
+              </div>
+              <div class="form-group form-check">
+                <label><input type="checkbox" id="ann-pinned" /> Pin to top</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="ann-password">Admin Password *</label>
+              <input type="password" id="ann-password" placeholder="Enter admin password" required />
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" id="ann-modal-cancel">Cancel</button>
+              <button type="submit" class="btn btn-primary">Post Announcement</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: Community ─────────────────────────────────────── -->
+    <section class="section" id="section-community">
+      <div class="section-header">
+        <h1>Community Reports</h1>
+        <p class="section-subtitle">Crowd-sourced misinformation flagging. Vote on reports to help the community.</p>
+      </div>
+
+      <div class="toolbar">
+        <div class="filter-chips" id="community-filters">
+          <button class="chip active" data-sort="latest">Latest</button>
+          <button class="chip" data-sort="trending">🔥 Trending</button>
+        </div>
+        <button class="btn btn-danger btn-sm" id="btn-submit-report">🚩 Report Message</button>
+      </div>
+
+      <div class="reports-list" id="reports-list">
+        <div class="loading-spinner">Loading…</div>
+      </div>
+
+      <!-- Submit Report Modal -->
+      <div class="modal-overlay hidden" id="report-modal">
+        <div class="modal glass-card">
+          <div class="modal-header">
+            <h3>🚩 Report Suspicious Message</h3>
+            <button class="modal-close" id="report-modal-close">✕</button>
+          </div>
+          <form id="report-form" novalidate>
+            <div class="form-group">
+              <label for="report-text">Suspicious Message *</label>
+              <textarea id="report-text" rows="5" placeholder="Paste the suspicious message here…" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="report-context">Context (optional)</label>
+              <input type="text" id="report-context" placeholder="Where did you receive this? (e.g. WhatsApp group)" />
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" id="report-modal-cancel">Cancel</button>
+              <button type="submit" class="btn btn-danger">Submit Report</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: Dashboard ─────────────────────────────────────── -->
+    <section class="section" id="section-dashboard">
+      <div class="section-header">
+        <h1>Analytics Dashboard</h1>
+        <p class="section-subtitle">Live statistics and trends from all analyses.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="glass-card stat-card" id="stat-total">
+          <div class="stat-icon">🔬</div>
+          <div class="stat-value counter" id="cnt-total">0</div>
+          <div class="stat-label">Total Analyzed</div>
+        </div>
+        <div class="glass-card stat-card" id="stat-fake">
+          <div class="stat-icon">🔴</div>
+          <div class="stat-value counter" id="cnt-fake">0</div>
+          <div class="stat-label">Flagged as Fake</div>
+        </div>
+        <div class="glass-card stat-card" id="stat-real">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value counter" id="cnt-real">0</div>
+          <div class="stat-label">Verified Credible</div>
+        </div>
+        <div class="glass-card stat-card" id="stat-reports">
+          <div class="stat-icon">🚩</div>
+          <div class="stat-value counter" id="cnt-reports">0</div>
+          <div class="stat-label">Community Reports</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <!-- Donut Chart -->
+        <div class="glass-card chart-card">
+          <h3>Verdict Distribution</h3>
+          <div class="donut-container">
+            <svg class="donut-svg" id="donut-svg" viewBox="0 0 200 200" aria-label="Verdict distribution donut chart"></svg>
+            <div class="donut-legend" id="donut-legend"></div>
+          </div>
+        </div>
+
+        <!-- Model Info -->
+        <div class="glass-card chart-card">
+          <h3>🤖 Model Performance</h3>
+          <div class="model-stats" id="model-stats">
+            <div class="model-stat-row">
+              <span>Accuracy</span>
+              <div class="model-bar-wrap"><div class="model-bar" id="bar-accuracy"></div></div>
+              <span id="val-accuracy">—</span>
+            </div>
+            <div class="model-stat-row">
+              <span>F1 Score</span>
+              <div class="model-bar-wrap"><div class="model-bar" id="bar-f1"></div></div>
+              <span id="val-f1">—</span>
+            </div>
+            <div class="model-info-grid" id="model-info-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="glass-card recent-card">
+        <h3>Recent Activity</h3>
+        <div class="recent-list" id="recent-list"></div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: WhatsApp ──────────────────────────────────────── -->
+    <section class="section" id="section-whatsapp">
+      <div class="section-header">
+        <h1>WhatsApp Bot Setup</h1>
+        <p class="section-subtitle">Connect TruthLens to WhatsApp so students can forward messages directly for analysis.</p>
+      </div>
+
+      <div class="whatsapp-grid">
+        <!-- How it Works -->
+        <div class="glass-card wa-card">
+          <div class="card-header">
+            <span class="card-icon">📱</span>
+            <h2>How It Works</h2>
+          </div>
+          <div class="wa-flow">
+            <div class="wa-step"><div class="step-num">1</div><div class="step-text">Student receives suspicious message on WhatsApp</div></div>
+            <div class="wa-arrow">↓</div>
+            <div class="wa-step"><div class="step-num">2</div><div class="step-text">Forwards it to the TruthLens WhatsApp bot number</div></div>
+            <div class="wa-arrow">↓</div>
+            <div class="wa-step"><div class="step-num">3</div><div class="step-text">TruthLens AI analyzes the message instantly</div></div>
+            <div class="wa-arrow">↓</div>
+            <div class="wa-step"><div class="step-num">4</div><div class="step-text">Receives detailed credibility report in the chat</div></div>
+          </div>
+        </div>
+
+        <!-- Setup Steps -->
+        <div class="glass-card wa-card">
+          <div class="card-header">
+            <span class="card-icon">⚙️</span>
+            <h2>Setup Guide</h2>
+          </div>
+          <div class="setup-steps">
+            <div class="setup-step">
+              <div class="setup-num">1</div>
+              <div class="setup-content">
+                <strong>Create a free Twilio account</strong>
+                <p>Visit <a href="https://twilio.com" target="_blank" class="link">twilio.com</a> and sign up for a free account.</p>
+              </div>
+            </div>
+            <div class="setup-step">
+              <div class="setup-num">2</div>
+              <div class="setup-content">
+                <strong>Activate WhatsApp Sandbox</strong>
+                <p>In Twilio Console → Messaging → Try it out → WhatsApp. Send the join code from your phone.</p>
+              </div>
+            </div>
+            <div class="setup-step">
+              <div class="setup-num">3</div>
+              <div class="setup-content">
+                <strong>Copy credentials to .env</strong>
+                <p>Copy your <code>ACCOUNT_SID</code> and <code>AUTH_TOKEN</code> into your <code>.env</code> file.</p>
+              </div>
+            </div>
+            <div class="setup-step">
+              <div class="setup-num">4</div>
+              <div class="setup-content">
+                <strong>Install & run ngrok</strong>
+                <code class="code-block">ngrok http 5000</code>
+                <p>Copy the <code>https://xxxx.ngrok.io</code> URL it gives you.</p>
+              </div>
+            </div>
+            <div class="setup-step">
+              <div class="setup-num">5</div>
+              <div class="setup-content">
+                <strong>Set Webhook URL in Twilio</strong>
+                <p>In Twilio Console → WhatsApp Sandbox → "When a message comes in", paste:</p>
+                <code class="code-block">https://your-ngrok-url.ngrok.io/webhook</code>
+              </div>
+            </div>
+            <div class="setup-step">
+              <div class="setup-num">6</div>
+              <div class="setup-content">
+                <strong>Test it!</strong>
+                <p>Send any message to the Twilio WhatsApp sandbox number and watch TruthLens respond.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bot Commands -->
+        <div class="glass-card wa-card wa-commands">
+          <div class="card-header">
+            <span class="card-icon">💬</span>
+            <h2>Bot Commands</h2>
+          </div>
+          <div class="commands-list">
+            <div class="command-row">
+              <code>help</code>
+              <span>Show all available commands</span>
+            </div>
+            <div class="command-row">
+              <code>latest</code>
+              <span>Get 3 latest verified announcements</span>
+            </div>
+            <div class="command-row">
+              <code>stats</code>
+              <span>View system statistics</span>
+            </div>
+            <div class="command-row">
+              <code>report &lt;text&gt;</code>
+              <span>Submit a message to community reports</span>
+            </div>
+            <div class="command-row">
+              <code>any message</code>
+              <span>Get instant credibility analysis</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Reply Preview -->
+        <div class="glass-card wa-card">
+          <div class="card-header">
+            <span class="card-icon">📲</span>
+            <h2>Sample Bot Reply</h2>
+          </div>
+          <div class="wa-preview">
+            <div class="wa-bubble">
+              <div class="wa-bubble-text">
+                <strong>🛡️ TruthLens Credibility Report</strong><br>
+                ━━━━━━━━━━━━━━━━━━━<br>
+                📊 Score: <strong>18/100</strong><br>
+                💀 Verdict: <strong>Almost Certainly Fake</strong><br><br>
+                🔍 <strong>Key Signals:</strong><br>
+                &nbsp;⚠️ ML Model: 88% fake probability<br>
+                &nbsp;⚠️ Excessive CAPS — 47% of text<br>
+                &nbsp;⚠️ Multiple urgency signals detected<br>
+                &nbsp;⚠️ No official source cited<br><br>
+                🔄 72% similar to a known fake message<br>
+                ━━━━━━━━━━━━━━━━━━━<br>
+                💡 Reply <em>latest</em> for official updates
+              </div>
+              <div class="wa-time">12:04 PM ✓✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Sample messages data -->
+  <script>
+    window.SAMPLES = {
+      fake1: "🚨🚨 URGENT!!! Tomorrow's exam has been CANCELLED without prior notice!!! College closed for 2 weeks due to government order!!! SHARE THIS WITH ALL STUDENTS IMMEDIATELY!!! Don't go to college tomorrow!!! Forwarded as received from reliable source 🚨🚨",
+      real1: "Dear Students, The mid-semester examination for CS301 (Data Structures) scheduled for 25th May 2026 (Monday) will be held as per the original timetable — 10:00 AM to 12:00 PM in Examination Hall B. Please carry your ID cards. — Prof. Sharma, HOD Computer Science, Dept. of Engineering"
+    };
+  </script>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/analyzer.js"></script>
+  <script src="/static/js/trusted.js"></script>
+  <script src="/static/js/community.js"></script>
+  <script src="/static/js/dashboard.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

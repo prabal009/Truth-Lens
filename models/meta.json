@@ -1,0 +1,14 @@
+{
+  "accuracy": 100.0,
+  "f1_score": 100.0,
+  "total_samples": 6000,
+  "fake_samples": 3000,
+  "real_samples": 3000,
+  "features": 50000,
+  "models": [
+    "MultinomialNB",
+    "LogisticRegression",
+    "RandomForest"
+  ],
+  "voting": "soft"
+}
